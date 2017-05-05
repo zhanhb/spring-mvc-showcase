@@ -4,48 +4,49 @@ import java.util.List;
 import java.util.Map;
 
 public class NestedBean {
-	
-	private String foo;
 
-	private List<NestedBean> list;
-	
-	private Map<String, NestedBean> map;
-	
-	public String getFoo() {
-		return foo;
-	}
+    private String foo;
 
-	public void setFoo(String foo) {
-		this.foo = foo;
-	}
+    private List<NestedBean> list;
 
-	public List<NestedBean> getList() {
-		return list;
-	}
+    private Map<String, NestedBean> map;
 
-	public void setList(List<NestedBean> list) {
-		this.list = list;
-	}
+    public String getFoo() {
+        return foo;
+    }
 
-	public Map<String, NestedBean> getMap() {
-		return map;
-	}
+    public void setFoo(String foo) {
+        this.foo = foo;
+    }
 
-	public void setMap(Map<String, NestedBean> map) {
-		this.map = map;
-	}
+    public List<NestedBean> getList() {
+        return list;
+    }
 
-	public String toString() {
+    public void setList(List<NestedBean> list) {
+        this.list = list;
+    }
+
+    public Map<String, NestedBean> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, NestedBean> map) {
+        this.map = map;
+    }
+
+    @Override
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("NestedBean");
         if (foo != null) {
-        	sb.append(" foo=").append(foo);
+            sb.append(" foo=").append(foo);
         }
         if (list != null) {
-        	sb.append(" list=").append(list);
+            sb.append(" list=").append(list);
         }
         if (map != null) {
-        	sb.append(" map=").append(map);
+            sb.append(" map=").append(map);
         }
         return sb.toString();
     }

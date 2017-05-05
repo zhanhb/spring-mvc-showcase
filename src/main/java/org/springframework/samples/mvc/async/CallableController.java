@@ -1,7 +1,6 @@
 package org.springframework.samples.mvc.async;
 
 import java.util.concurrent.Callable;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,70 +13,55 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 @RequestMapping("/async/callable")
 public class CallableController {
 
+    @RequestMapping("/response-body")
+    @ResponseBody
+    public Callable<String> callable() {
+        return () -> {
+            Thread.sleep(2000);
+            return "Callable result";
+        };
+    }
 
-	@RequestMapping("/response-body")
-	public @ResponseBody Callable<String> callable() {
+    @RequestMapping("/view")
+    public Callable<String> callableWithView(final Model model) {
+        return () -> {
+            Thread.sleep(2000);
+            model.addAttribute("foo", "bar");
+            model.addAttribute("fruit", "apple");
+            return "views/html";
+        };
+    }
 
-		return new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				Thread.sleep(2000);
-				return "Callable result";
-			}
-		};
-	}
+    @RequestMapping("/exception")
+    @ResponseBody
+    public Callable<String> callableWithException(
+            final @RequestParam(required = false, defaultValue = "true") boolean handled) {
+        return () -> {
+            Thread.sleep(2000);
+            if (handled) {
+                // see handleException method further below
+                throw new IllegalStateException("Callable error");
+            } else {
+                throw new IllegalArgumentException("Callable error");
+            }
+        };
+    }
 
-	@RequestMapping("/view")
-	public Callable<String> callableWithView(final Model model) {
+    @RequestMapping("/custom-timeout-handling")
+    @ResponseBody
+    public WebAsyncTask<String> callableWithCustomTimeoutHandling() {
+        Callable<String> callable = () -> {
+            Thread.sleep(2000);
+            return "Callable result";
+        };
 
-		return new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				Thread.sleep(2000);
-				model.addAttribute("foo", "bar");
-				model.addAttribute("fruit", "apple");
-				return "views/html";
-			}
-		};
-	}
+        return new WebAsyncTask<>(1000, callable);
+    }
 
-	@RequestMapping("/exception")
-	public @ResponseBody Callable<String> callableWithException(
-			final @RequestParam(required=false, defaultValue="true") boolean handled) {
-
-		return new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				Thread.sleep(2000);
-				if (handled) {
-					// see handleException method further below
-					throw new IllegalStateException("Callable error");
-				}
-				else {
-					throw new IllegalArgumentException("Callable error");
-				}
-			}
-		};
-	}
-
-	@RequestMapping("/custom-timeout-handling")
-	public @ResponseBody WebAsyncTask<String> callableWithCustomTimeoutHandling() {
-
-		Callable<String> callable = new Callable<String>() {
-			@Override
-			public String call() throws Exception {
-				Thread.sleep(2000);
-				return "Callable result";
-			}
-		};
-
-		return new WebAsyncTask<String>(1000, callable);
-	}
-
-	@ExceptionHandler
-	@ResponseBody
-	public String handleException(IllegalStateException ex) {
-		return "Handled exception: " + ex.getMessage();
-	}
+    @ExceptionHandler
+    @ResponseBody
+    public String handleException(IllegalStateException ex) {
+        return "Handled exception: " + ex.getMessage();
+    }
 
 }
